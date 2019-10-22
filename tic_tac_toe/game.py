@@ -1,104 +1,96 @@
-# internal helpers
-def _position_is_empty_in_board(position, board):
-    """
-    Checks if given position is empty ("-") in the board.
+# Global variables
+theBoard = [' '] * 10 # a list of empty spaces
+available = [str(num) for num in range(0,10)] # a List Comprehension
+players = [0,'X','O'] # note that players[1] == 'X' and players[-1] == 'O'
 
-    :param position: Two-elements tuple representing a
-                     position in the board. Example: (0, 1)
-    :param board: Game board.
+def display_board(a,b):
+    print('Available TIC-TAC-TOE\n'+
+    ' moves\n\n '+
+    a[7]+'|'+a[8]+'|'+a[9]+' '+b[7]+'|'+b[8]+'|'+b[9]+'\n '+
+    '----- -----\n '+
+    a[4]+'|'+a[5]+'|'+a[6]+' '+b[4]+'|'+b[5]+'|'+b[6]+'\n '+
+    '----- -----\n '+
+    a[1]+'|'+a[2]+'|'+a[3]+' '+b[1]+'|'+b[2]+'|'+b[3]+'\n')
+display_board(available,theBoard)
 
-    Returns True if given position is empty, False otherwise.
-    """
-    pass
-
-
-def _position_is_valid(position):
-    """
-    Checks if given position is a valid. To consider a position as valid, it
-    must be a two-elements tuple, containing values from 0 to 2.
-    Examples of valid positions: (0,0), (1,0)
-    Examples of invalid positions: (0,0,1), (9,8), False
-
-    :param position: Two-elements tuple representing a
-                     position in the board. Example: (0, 1)
-
-    Returns True if given position is valid, False otherwise.
-    """
-    pass
+def display_board(a,b):
+    print(f'Available TIC-TAC-TOE\n moves\n\n {a[7]}|{a[8]}|{a[9]} {b[7]}|{b[8]}
+display_board(available,theBoard)
 
 
-def _board_is_full(board):
-    """
-    Returns True if all positions in given board are occupied.
 
-    :param board: Game board.
-    """
-    pass
+def place_marker(avail,board,marker,position):
+    board[position] = marker
+    avail[position] = ' '
 
 
-def _is_winning_combination(board, combination, player):
-    """
-    Checks if all 3 positions in given combination are occupied by given player.
 
-    :param board: Game board.
-    :param combination: Tuple containing three position elements.
-                        Example: ((0,0), (0,1), (0,2))
-
-    Returns True of all three positions in the combination belongs to given
-    player, False otherwise.
-    """
-    pass
+def place_marker(avail,board,marker,position):
+    board[position] = marker
+    avail[position] = ' '
 
 
-def _check_winning_combinations(board, player):
-    """
-    There are 8 posible combinations (3 horizontals, 3, verticals and 2 diagonals)
-    to win the Tic-tac-toe game.
-    This helper loops through all these combinations and checks if any of them
-    belongs to the given player.
 
-    :param board: Game board.
-    :param player: One of the two playing players.
-
-    Returns the player (winner) of any of the winning combinations is completed
-    by given player, or None otherwise.
-    """
-    pass
+def win_check(board,mark):
+    return ((board[7] == board[8] == board[9] == mark) or # across the top
+    (board[4] == board[5] == board[6] == mark) or # across the middle
+    (board[1] == board[2] == board[3] == mark) or # across the bottom
+    (board[7] == board[4] == board[1] == mark) or # down the middle
+    (board[8] == board[5] == board[2] == mark) or # down the middle
+    (board[9] == board[6] == board[3] == mark) or # down the right side
+    (board[7] == board[5] == board[3] == mark) or # diagonal
+    (board[9] == board[5] == board[1] == mark)) # diagonal
 
 
-# public interface
-def start_new_game(player1, player2):
-    """
-    Creates and returns a new game configuration.
-    """
-    pass
+def random_player():
+    return random.choice((-1, 1))
+def space_check(board,position):
+    return board[position] == ' '
+def full_board_check(board):
+    return ' ' not in board[1:]
 
 
-def get_winner(game):
-    """
-    Returns the winner player if any, or None otherwise.
-    """
-    pass
+def player_choice(board,player):
+    position = 0
+    while position not in [1,2,3,4,5,6,7,8,9] or not space_check(board, position):
+        try:
+            position = int(input('Player %s, choose your next position: (1-9) '%(player)))
+        except:
+            print("I'm sorry, please try again.")
+    return position
 
 
-def move(game, player, position):
-    """
-    Performs a player movement in the game. Must ensure all the pre requisites
-    checks before the actual movement is done.
-    After registering the movement it must check if the game is over.
-    """
-    pass
+def replay():
+    return input('Do you want to play again? Enter Yes or No: ').lower().startswith('y')
 
 
-def get_board_as_string(game):
-    """
-    Returns a string representation of the game board in the current state.
-    """
-    pass
-
-
-def get_next_turn(game):
-    """
-    Returns the player who plays next, or None if the game is already over.
-    """
-    pass
+while True:
+    clear_output()
+    print('Welcome to Tic Tac Toe!')
+    toggle = random_player()
+    player = players[toggle]
+    print('For this round, Player %s will go first!' %(player))
+    game_on = True
+    input('Hit Enter to continue')
+    while game_on:
+        display_board(available,theBoard)
+        position = player_choice(theBoard,player)
+        place_marker(available,theBoard,player,position)
+        if win_check(theBoard, player):
+            display_board(available,theBoard)
+            print('Congratulations! Player '+player+' wins!')
+            game_on = False
+        else:
+        if full_board_check(theBoard):
+            display_board(available,theBoard)
+            print('The game is a draw!')
+        break
+            else:
+            toggle *= -1
+            player = players[toggle]
+            clear_output()
+        # reset the board and available moves list
+    theBoard = [' '] * 10
+    available = [str(num) for num in range(0,10)]
+    if not replay():
+          break
